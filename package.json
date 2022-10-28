@@ -8,7 +8,8 @@
     "prisma": "^4.5.0"
   },
   "scripts": {
-    "dev": "nodemon app.js --open --hot"
+    "dev": " nodemon app.js --open --hot",
+    "start": "npx prisma migrate deploy && node app.js"
   },
   "author": "",
   "license": "ISC",
