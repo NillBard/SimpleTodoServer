@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": " nodemon app.js --open --hot",
-    "start": "npx prisma migrate deploy && node app.js"
+    "start": "npx prisma db push && node app.js"
   },
   "author": "",
   "license": "ISC",
