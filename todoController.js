@@ -4,42 +4,44 @@ export default class TodoController {
   async getTodos(_, res) {
     const todos = await db.TodoItem.findMany();
     todos
-      ? res.json({ status: 200, data: todos })
-      : res.json({ status: 404, data: "List not found" });
+      ? res.status(200).json({ data: todos })
+      : res.status(404).json({ data: "List not found" });
   }
 
   async addTodo(req, res) {
     try {
-      const { text, state } = req.body;
+      const { title, description, done } = req.body;
       const newTodo = await db.TodoItem.create({
         data: {
-          text,
-          state: state ?? false,
+          title,
+          description: description ?? "",
+          done: done ?? false,
         },
       });
 
-      res.json({ status: 200, data: newTodo });
+      res.status(200).json({ data: newTodo });
     } catch (error) {
       console.log(error);
     }
   }
 
   async updateTodo(req, res) {
-    const { text, state } = req.body;
+    const { title, description, done } = req.body;
     const id = +req.params.id;
     try {
       const todo = await db.TodoItem.findUnique({ where: { id } });
       if (!todo) {
-        res.json({ status: 404, messeage: "notFound" });
+        res.status(404).json({ messeage: "Not Found" });
       }
-      await db.TodoItem.update({
+      const updatedTodo = await db.TodoItem.update({
         where: { id },
         data: {
-          text,
-          state,
+          title,
+          description,
+          done,
         },
       });
-      res.json({ status: 200, data: "Device updated" });
+      res.status(200).json({ data: updatedTodo });
     } catch (error) {
       console.log(error);
     }
@@ -50,8 +52,8 @@ export default class TodoController {
     try {
       const todo = await db.TodoItem.findUnique({ where: { id } });
       if (!todo) res.json({ status: 404, messeage: "Not Found" });
-      await db.TodoItem.delete({ where: { id } });
-      res.json({ status: 200, data: "Device deleted" });
+      const deletedTodo = await db.TodoItem.delete({ where: { id } });
+      res.status(200).json({ data: deletedTodo });
     } catch (error) {
       console.log(error);
     }
