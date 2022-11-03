@@ -1,8 +1,11 @@
 import express from "express";
 import router from "./router.js";
-
-const app = express().use(express.json()).use("/todos", router);
-const PORT = 3000;
+import cors from "cors";
+const app = express()
+  .use(cors({ origin: "http://localhost:3000" }))
+  .use(express.json())
+  .use("/todos", router);
+const PORT = 5000;
 
 const start = () => {
   try {
