@@ -5,12 +5,13 @@ export default class TodoController {
     const todos = await db.TodoItem.findMany();
     todos
       ? res.status(200).json({ data: todos })
-      : res.status(404).json({ data: "List not found" });
+      : res.status(404).json({ messeage: "List not found" });
   }
 
   async addTodo(req, res) {
     try {
       const { title, description, done } = req.body;
+      console.log(req.body);
       const newTodo = await db.TodoItem.create({
         data: {
           title,
@@ -51,7 +52,7 @@ export default class TodoController {
     const id = +req.params.id;
     try {
       const todo = await db.TodoItem.findUnique({ where: { id } });
-      if (!todo) res.json({ status: 404, messeage: "Not Found" });
+      if (!todo) res.status(404).json({ messeage: "Not Found" });
       const deletedTodo = await db.TodoItem.delete({ where: { id } });
       res.status(200).json({ data: deletedTodo });
     } catch (error) {
