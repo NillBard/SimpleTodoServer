@@ -1,10 +1,10 @@
 import express from "express";
-import router from "./router.js";
+import router from "./Router/index";
 import cors from "cors";
 const app = express()
   .use(cors({ origin: "http://localhost:3000" }))
   .use(express.json())
-  .use("/todos", router);
+  .use("/api", router);
 const PORT = 5000;
 
 const start = () => {

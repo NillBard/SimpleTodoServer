@@ -16,3 +16,10 @@ model TodoItem {
   description String
   done        Boolean
 }
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  name     String
+}
