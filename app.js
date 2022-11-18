@@ -1,5 +1,5 @@
 import express from "express";
-import router from "./Router/index";
+import router from "./Router/index.js";
 import cors from "cors";
 const app = express()
   .use(cors({ origin: "http://localhost:3000" }))

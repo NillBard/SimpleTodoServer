@@ -18,8 +18,43 @@ model TodoItem {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  name     String
+  id         Int         @id @default(autoincrement())
+  email      String      @unique
+  password   String
+  name       String
+  favourites Favourite[]
 }
+
+model Favourite {
+  id       Int    @id
+  name     String
+  status   String
+  species  String
+  type     String
+  created  String
+  url      String
+  origin   String
+  gender   String
+  image    String
+  user     User?  @relation(fields: [userId], references: [id])
+  userId   Int?
+  location String
+}
+
+// model Episode {
+//   id          Int                  @id
+//   name        String
+//   air_date    String
+//   episode     String
+//   characters  EpisodeOnCharacter[]
+//   favouriteId Int?
+// }
+
+// model EpisodeOnCharacter {
+//   character   Favourite @relation(fields: [characterId], references: [id])
+//   characterId Int
+//   epidsode    Episode   @relation(fields: [episodeId], references: [id])
+//   episodeId   Int
+
+//   @@id([characterId, episodeId])
+// }

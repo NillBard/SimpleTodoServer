@@ -36,6 +36,13 @@ export default class AuthController {
         email: candidate.email,
       });
 
+      res.cookie("token_cookie", refreshToken, {
+        sameSite: "lax",
+        httpOnly: true,
+        path: "/",
+        maxAge: 86400,
+      });
+
       res.status(200).json({ data: accessToken });
     } catch (error) {}
   }
@@ -66,9 +73,47 @@ export default class AuthController {
         password: user.password,
       });
 
+      res.cookie("token_cookie", refreshToken, {
+        sameSite: "lax",
+        httpOnly: true,
+        path: "/",
+        maxAge: 86400,
+      });
+
       res.status(200).json({ data: accessToken });
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async auth(req, res) {
+    const cookieToken = req.cookies?.token_cookie;
+
+    if (!cookieToken)
+      return res.json({ status: 404, message: "Cookies is empty" });
+
+    const decode = jwt.verify(cookieToken, "SECRET_KEY");
+    console.log(decode);
+    const user = await db.user.findUnique({ where: { id: decode.id } });
+    console.log("user", user);
+
+    if (!user) {
+      res.json({ status: 404, message: "Error" });
+    }
+
+    const token = this._generateAccessToken({
+      email: user.email,
+      id: user.id,
+      password: user.password,
+    });
+    const refreshToken = this._generateRefreshToken({ id: user.id });
+
+    res.cookie("token_cookie", refreshToken, {
+      sameSite: "lax",
+      httpOnly: true,
+      path: "/",
+      maxAge: 3600 * 24 * 30,
+    });
+    res.json({ status: 200, data: token });
   }
 }
