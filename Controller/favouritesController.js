@@ -3,30 +3,22 @@ import db from "../db.js";
 export default class FavouritesController {
   async addFavourites(req, res) {
     try {
-      const body = req.body;
+      const { id } = req.body;
       const userId = req.user.id;
-      console.log(body);
-      console.log(userId);
 
-      const location = body.location.name;
-      const origin = body.origin.name;
-
-      const favourite = await db.favourite.create({
+      const user = await db.user.update({
+        where: { id: userId },
         data: {
-          ...body,
-          location,
-          origin,
-          user: {
-            connect: {
-              id: userId,
-            },
-          },
+          favourites: { connectOrCreate: { where: { id }, create: { id } } },
+        },
+        include: {
+          favourites: true,
         },
       });
 
-      console.log("favourites", favourite);
+      console.log(user.favourites);
 
-      res.status(200).json({ data: favourite });
+      res.status(200).json({ data: user.favourites });
     } catch (error) {
       console.log(error);
     }
@@ -34,7 +26,7 @@ export default class FavouritesController {
 
   async removeFavourites(req, res) {
     try {
-      const body = req.body;
+      const { id } = req.body;
       const userId = req.user.id;
 
       const user = await db.user.update({
@@ -42,13 +34,18 @@ export default class FavouritesController {
         data: {
           favourites: {
             disconnect: {
-              id: body.id,
+              id,
             },
           },
         },
+        include: {
+          favourites: true,
+        },
       });
       res.status(200).json({ data: user });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getAllFavourites(req, res) {
