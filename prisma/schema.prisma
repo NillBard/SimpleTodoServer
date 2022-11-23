@@ -18,14 +18,14 @@ model TodoItem {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  email      String      @unique
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
   password   String
   name       String
-  favourites Favourite[]
+  favourites Favourites[]
 }
 
-model Favourite {
+model Favourites {
   id   Int    @id
   user User[]
 }

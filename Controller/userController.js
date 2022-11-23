@@ -87,10 +87,11 @@ export default class AuthController {
   }
 
   async auth(req, res) {
+    console.log(req.cookies);
     const cookieToken = req.cookies?.token_cookie;
 
     if (!cookieToken)
-      return res.json({ status: 404, message: "Cookies is empty" });
+      return res.status(404).json({ message: "Cookies is empty" });
 
     const decode = jwt.verify(cookieToken, "SECRET_KEY");
     console.log(decode);
@@ -98,7 +99,7 @@ export default class AuthController {
     console.log("user", user);
 
     if (!user) {
-      res.json({ status: 404, message: "Error" });
+      res.status(404).json({ message: "Error" });
     }
 
     const token = this._generateAccessToken({
@@ -114,6 +115,6 @@ export default class AuthController {
       path: "/",
       maxAge: 3600 * 24 * 30,
     });
-    res.json({ status: 200, data: token });
+    res.status(200).json({ data: token });
   }
 }

@@ -5,20 +5,24 @@ export default class FavouritesController {
     try {
       const { id } = req.body;
       const userId = req.user.id;
-
+      console.log(id);
       const user = await db.user.update({
         where: { id: userId },
         data: {
-          favourites: { connectOrCreate: { where: { id }, create: { id } } },
-        },
-        include: {
-          favourites: true,
+          favourites: {
+            connectOrCreate: {
+              where: {
+                id,
+              },
+              create: { id },
+            },
+          },
         },
       });
 
-      console.log(user.favourites);
+      const characters = await db.Favourites.findUnique({ where: { id } });
 
-      res.status(200).json({ data: user.favourites });
+      res.status(200).json({ data: characters });
     } catch (error) {
       console.log(error);
     }
@@ -29,20 +33,21 @@ export default class FavouritesController {
       const { id } = req.body;
       const userId = req.user.id;
 
-      const user = await db.user.update({
+      const user = await db.user.findUnique({
+        where: { id: userId },
+      });
+
+      const updateUser = await db.user.update({
         where: { id: userId },
         data: {
           favourites: {
-            disconnect: {
-              id,
-            },
+            disconnect: { id },
           },
         },
-        include: {
-          favourites: true,
-        },
       });
-      res.status(200).json({ data: user });
+      const characters = await db.Favourites.findUnique({ where: { id } });
+
+      res.status(200).json({ data: characters });
     } catch (error) {
       console.log(error);
     }
@@ -51,10 +56,20 @@ export default class FavouritesController {
   async getAllFavourites(req, res) {
     try {
       const userId = req.user.id;
-      const allFavourites = await db.favourite.findMany({ where: { userId } });
-      allFavourites
-        ? res.status(200).json({ data: allFavourites })
+      const favourites = await db.Favourites.findMany({
+        where: {
+          user: {
+            some: {
+              id: userId,
+            },
+          },
+        },
+      });
+      favourites
+        ? res.status(200).json({ data: favourites })
         : res.status(404).json({ message: "Not Found" });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

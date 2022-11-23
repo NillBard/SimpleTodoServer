@@ -1,8 +1,11 @@
 import express from "express";
 import router from "./Router/index.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+
 const app = express()
-  .use(cors({ origin: "http://localhost:3000" }))
+  .use(cors({ origin: "http://localhost:3000", credentials: true }))
+  .use(cookieParser("SECRET_KEY"))
   .use(express.json())
   .use("/api", router);
 const PORT = 5000;
